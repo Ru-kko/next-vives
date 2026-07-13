@@ -10,7 +10,7 @@ This skill ensures the agent always works with the correct Figma project without
 
 Always use the following Figma project as the default workspace unless the user explicitly requests a different one.
 
-**Figma Project ID:** `3md97184vqa371qzoBxqU7`
+**Figma Project URL:** `https://www.figma.com/design/3md97184vqa371qzoBxqU7/InsightAI`
 
 Do not ask the user for the project ID when creating, modifying, inspecting, or commenting on designs. Assume this project is the default context for all Figma-related tasks.
 

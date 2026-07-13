@@ -9,6 +9,8 @@ The Figma project is organized into three main sections:
 - **Pages:** `node-id=6-32`
 - **Components:** `node-id=10-271`
 
+The skill `figma-context`, contains the default Figma project URL and ensures that the agent always works with the correct Figma project without requiring the user to provide the project ID in every request.
+
 ### Items
 Contains:
 
