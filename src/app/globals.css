@@ -1,0 +1,30 @@
+:root {
+  --border: 51, 65, 85;
+  --turquoise: 6, 182, 212;
+  --indigo: 99, 102, 241;
+  --emerald: 16, 185, 129;
+  --red: 236, 72, 153;
+}
+
+[data-theme='dark'] {
+  --blue: 59, 130, 246;
+  --orange: 251, 191, 36;
+  --background: 30, 41, 59;
+  --surface: 15, 23, 42;
+  --text: 248, 250, 252;
+  --text-secondary: 148, 163, 184;
+}
+
+[data-theme='light'] {
+  --blue: 29, 78, 216;
+  --orange: 245, 158, 11;
+  --background: 249, 250, 251;
+  --surface: 255, 255, 255;
+  --text: 51, 65, 85;
+  --text-secondary: 107, 114, 128;
+}
+
+body {
+  background: rgb(var(--background));
+  color: rgb(var(--text));
+}

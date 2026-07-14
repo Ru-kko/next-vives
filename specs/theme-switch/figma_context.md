@@ -1,0 +1,129 @@
+# Figma Design Context — Theme Switch
+
+Source Figma file: **InsightAI** (`3md97184vqa371qzoBxqU7`)
+Project URL: https://www.figma.com/design/3md97184vqa371qzoBxqU7/InsightAI
+
+Fetched via Figma MCP (`get_metadata`, `get_design_context`, `get_variable_defs`) plus
+direct download of the exported SVG assets (the frames flatten to a single `<img>` in
+`get_design_context`, so raw SVG was parsed to recover per-element geometry and fills).
+
+> **Note on color tokens:** `get_variable_defs` returned `{}` for every node — the fills in
+> this design are **raw hex, not bound to Figma variables**. The hex values below are
+> cross-referenced by hand against the CSS variables documented in `docs/ui.md`. Where a hex
+> matches more than one token, all candidates are listed.
+
+## Color token cross-reference (`docs/ui.md`)
+
+| Raw hex | rgb() | Matches token(s) |
+| --- | --- | --- |
+| `#334155` | `51, 65, 85` | `--border` (static) — also equals Light-theme `--text` |
+| `#94A3B8` | `148, 163, 184` | `--text-secondary` (Dark theme) |
+| `#0F172A` | `15, 23, 42` | `--background` (Dark theme) |
+| `#FFFFFF` (white) | `255, 255, 255` | `--surface` (Light theme) |
+
+Usage form per `docs/ui.md`: `color: rgb(var(--token));`
+
+---
+
+## Node 457:802 — ThemeSwitch (Dark theme frame)
+
+- **Name:** `ThemeSwitchDark`
+- **Overall size:** width **102**, height **50** (px)
+- **Track:** `<rect>` 102 × 50, corner radius **rx = 25** (fully pill / capsule)
+  - Fill: `#334155` → `rgb(51,65,85)` → **`--border`**
+- **Knob — `Ellipse` (id 457:803):** rendered as `<circle>`
+  - Center `cx=76, cy=25`, radius `r=20` → **40 × 40** box, bounding `x = 56 → 96`, `y = 5 → 45`
+  - **Position: RIGHT side of the track** (this is the "dark" resting state)
+  - Fill: `#94A3B8` → `rgb(148,163,184)` → **`--text-secondary`**, with **`opacity: 0.4`**
+  - Insets: 5 px top/bottom, ~6 px from right edge (102 − 96)
+- **Icons shown inside the track (both present, knob overlays the Moon):**
+  - `Sun` (vector 457:804) at `x=10, y=10`, **30 × 30** — fill `#94A3B8` → **`--text-secondary`**
+  - `Moon` (vector 457:805) at `x=60, y=10`, **32 × 30** — fill `#0F172A` → **`--background`** (sits under the knob)
+
+## Node 457:806 — ThemeSwitch (Light theme frame)
+
+- **Name:** `ThemeSwitchLight`
+- **Overall size:** width **102**, height **50** (px)
+- **Track:** `<rect>` 102 × 50, corner radius **rx = 25**
+  - Fill: `#334155` → `rgb(51,65,85)` → **`--border`** (same track fill as the dark frame in the SVG export)
+- **Knob — `Ellipse` (id 457:807):** rendered as `<circle>`
+  - Center `cx=25, cy=25`, radius `r=20` → **40 × 40** box, bounding `x = 5 → 45`, `y = 5 → 45`
+  - **Position: LEFT side of the track** (this is the "light" resting state)
+  - Fill: `#FFFFFF` white → `rgb(255,255,255)` → **`--surface`**, **opacity 1** (no transparency, unlike the dark knob)
+  - Insets: 5 px top/bottom, 5 px from left edge
+- **Icons shown inside the track (knob overlays the Sun):**
+  - `Sun` (vector 457:808) at `x=10, y=10`, **30 × 30** — fill `#334155` → `rgb(51,65,85)` → **`--text`** (Light) / `--border` (sits under the knob)
+  - `Moon` (vector 457:809) at `x=60, y=10`, **32 × 30** — fill `#FFFFFF` white → **`--surface`**
+
+## Toggle transition (Dark ⇄ Light)
+
+The two frames are the same 102 × 50 pill; only the knob (`Ellipse`) moves and recolors:
+
+| State | Knob left edge (x) | Knob center (cx) | Knob fill | Knob opacity |
+| --- | --- | --- | --- | --- |
+| **Light** | `5` | `25` | white → `--surface` | 1.0 |
+| **Dark** | `56` | `76` | `#94A3B8` → `--text-secondary` | 0.4 |
+
+- Horizontal travel of the knob: **left edge 5 → 56 px** (Δ ≈ **51 px**), i.e. `translateX(~51px)`.
+- Available track travel = `102 − 40 (knob) − 5 (left inset) − 6 (right inset) ≈ 51 px` — consistent.
+- Both `Sun` and `Moon` glyphs stay fixed inside the track; the knob slides over whichever
+  icon is inactive, so the *visible* icon is the one opposite the knob.
+- The icons also recolor between states (Sun `--text-secondary` → `--text`; Moon `--background` → `--surface`).
+
+---
+
+## Node 8:107 — Sun Icon (standalone item)
+
+- **Name:** `Sun`
+- **viewBox:** `0 0 100 100`
+- **Structure:** single `<path id="Sun">`, `fill-rule="evenodd"`, `clip-rule="evenodd"`
+- **Fill in export:** `var(--fill-0, black)` — monocolor placeholder; per `docs/ui.md` this must be
+  driven through `IconProps` as `style={{ fill: 'rgb(var(--<color>))' }}` (e.g. `color="orange"` for a sun).
+- **Path data:**
+
+```
+M55.262 5.26205C55.262 3.86647 54.7077 2.52805 53.7208 1.54122C52.734 0.554394 51.3956 0 50 0C48.6044 0 47.266 0.554394 46.2792 1.54122C45.2923 2.52805 44.7379 3.86647 44.7379 5.26205V7.9036C44.7379 9.29918 45.2923 10.6376 46.2792 11.6244C47.266 12.6113 48.6044 13.1656 50 13.1656C51.3956 13.1656 52.734 12.6113 53.7208 11.6244C54.7077 10.6376 55.262 9.29918 55.262 7.9036V5.26205ZM85.3557 22.0848C86.3142 21.0924 86.8446 19.7632 86.8326 18.3835C86.8206 17.0038 86.2672 15.684 85.2916 14.7084C84.316 13.7328 82.9962 13.1794 81.6165 13.1674C80.2368 13.1554 78.9076 13.6858 77.9152 14.6443L76.0471 16.5123C75.0886 17.5047 74.5582 18.834 74.5702 20.2136C74.5822 21.5933 75.1356 22.9131 76.1112 23.8888C77.0869 24.8644 78.4067 25.4178 79.7863 25.4298C81.166 25.4418 82.4952 24.9114 83.4877 23.9529L85.3557 22.0848ZM22.0848 14.6443C21.0924 13.6858 19.7632 13.1554 18.3835 13.1674C17.0038 13.1794 15.684 13.7328 14.7084 14.7084C13.7328 15.684 13.1794 17.0038 13.1674 18.3835C13.1554 19.7632 13.6858 21.0924 14.6443 22.0848L16.5123 23.9529C17.5047 24.9114 18.834 25.4418 20.2136 25.4298C21.5933 25.4178 22.9131 24.8644 23.8888 23.8888C24.8644 22.9131 25.4178 21.5933 25.4298 20.2136C25.4418 18.834 24.9114 17.5047 23.9529 16.5123L22.0848 14.6443ZM5.26205 44.7379C3.86647 44.7379 2.52805 45.2923 1.54122 46.2792C0.554394 47.266 0 48.6044 0 50C0 51.3956 0.554394 52.734 1.54122 53.7208C2.52805 54.7077 3.86647 55.262 5.26205 55.262H7.9036C9.29918 55.262 10.6376 54.7077 11.6244 53.7208C12.6113 52.734 13.1656 51.3956 13.1656 50C13.1656 48.6044 12.6113 47.266 11.6244 46.2792C10.6376 45.2923 9.29918 44.7379 7.9036 44.7379H5.26205ZM92.0964 44.7379C90.7008 44.7379 89.3624 45.2923 88.3756 46.2792C87.3887 47.266 86.8343 48.6044 86.8343 50C86.8343 51.3956 87.3887 52.734 88.3756 53.7208C89.3624 54.7077 90.7008 55.262 92.0964 55.262H94.738C96.1335 55.262 97.472 54.7077 98.4588 53.7208C99.4456 52.734 100 51.3956 100 50C100 48.6044 99.4456 47.266 98.4588 46.2792C97.472 45.2923 96.1335 44.7379 94.738 44.7379H92.0964ZM23.9529 83.4877C24.4554 83.0023 24.8563 82.4216 25.1321 81.7796C25.4079 81.1376 25.553 80.4472 25.5591 79.7485C25.5652 79.0498 25.432 78.3569 25.1674 77.7102C24.9029 77.0635 24.5121 76.476 24.0181 75.9819C23.524 75.4878 22.9365 75.0971 22.2898 74.8326C21.6431 74.568 20.9502 74.4348 20.2515 74.4409C19.5528 74.447 18.8623 74.5921 18.2204 74.8679C17.5784 75.1437 16.9977 75.5446 16.5123 76.0471L14.6443 77.9152C14.1417 78.4006 13.7408 78.9812 13.4651 79.6232C13.1893 80.2652 13.0441 80.9557 13.038 81.6544C13.032 82.3531 13.1651 83.046 13.4297 83.6927C13.6943 84.3393 14.085 84.9269 14.5791 85.4209C15.0731 85.915 15.6606 86.3057 16.3073 86.5703C16.954 86.8349 17.6469 86.968 18.3456 86.962C19.0443 86.9559 19.7348 86.8107 20.3768 86.5349C21.0188 86.2592 21.5994 85.8583 22.0848 85.3557L23.9529 83.4877ZM83.4877 76.0471C83.0023 75.5446 82.4216 75.1437 81.7796 74.8679C81.1376 74.5921 80.4472 74.447 79.7485 74.4409C79.0498 74.4348 78.3569 74.568 77.7102 74.8326C77.0635 75.0971 76.476 75.4878 75.9819 75.9819C75.4878 76.476 75.0971 77.0635 74.8326 77.7102C74.568 78.3569 74.4348 79.0498 74.4409 79.7485C74.447 80.4472 74.5921 81.1376 74.8679 81.7796C75.1437 82.4216 75.5446 83.0023 76.0471 83.4877L77.9152 85.3557C78.4006 85.8583 78.9812 86.2592 79.6232 86.5349C80.2652 86.8107 80.9557 86.9559 81.6544 86.962C82.3531 86.968 83.046 86.8349 83.6927 86.5703C84.3393 86.3057 84.9269 85.915 85.4209 85.4209C85.915 84.9269 86.3057 84.3393 86.5703 83.6927C86.8349 83.046 86.968 82.3531 86.962 81.6544C86.9559 80.9557 86.8107 80.2652 86.5349 79.6232C86.2592 78.9812 85.8583 78.4006 85.3557 77.9152L83.4877 76.0471ZM55.262 92.0964C55.262 90.7008 54.7077 89.3624 53.7208 88.3756C52.734 87.3887 51.3956 86.8343 50 86.8343C48.6044 86.8343 47.266 87.3887 46.2792 88.3756C45.2923 89.3624 44.7379 90.7008 44.7379 92.0964V94.738C44.7379 96.1335 45.2923 97.472 46.2792 98.4588C47.266 99.4456 48.6044 100 50 100C51.3956 100 52.734 99.4456 53.7208 98.4588C54.7077 97.472 55.262 96.1335 55.262 94.738V92.0964ZM28.9518 50C28.9518 44.4177 31.1694 39.064 35.1167 35.1167C39.064 31.1694 44.4177 28.9518 50 28.9518C55.5823 28.9518 60.936 31.1694 64.8833 35.1167C68.8306 39.064 71.0482 44.4177 71.0482 50C71.0482 55.5823 68.8306 60.936 64.8833 64.8833C60.936 68.8306 55.5823 71.0482 50 71.0482C44.4177 71.0482 39.064 68.8306 35.1167 64.8833C31.1694 60.936 28.9518 55.5823 28.9518 50ZM50 18.4277C41.6265 18.4277 33.596 21.7541 27.675 27.675C21.7541 33.596 18.4277 41.6265 18.4277 50C18.4277 58.3735 21.7541 66.404 27.675 72.325C33.596 78.2459 41.6265 81.5723 50 81.5723C58.3735 81.5723 66.404 78.2459 72.325 72.325C78.2459 66.404 81.5723 58.3735 81.5723 50C81.5723 41.6265 78.2459 33.596 72.325 27.675C66.404 21.7541 58.3735 18.4277 50 18.4277Z
+```
+
+- **Items-group mapping:** per `docs/ui.md` ("every vector asset in `pages` or `components`
+  has a corresponding item in `items` with same name"), this standalone `Sun` is the canonical
+  item asset. The `Sun` vectors embedded inside both ThemeSwitch frames (457:804 / 457:808) are
+  the same glyph scaled into a 30 × 30 slot, and should map to this item.
+
+## Node 8:103 — Moon Icon (standalone item)
+
+- **Name:** `Moon`
+- **viewBox:** `0 0 100 95` (note: **95** tall, not square)
+- **Structure:** single `<path id="Moon">`
+- **Fill in export:** `var(--fill-0, black)` — monocolor placeholder; drive via `IconProps`
+  (e.g. `color="orange"` or `color="text-secondary"`).
+- **Path data:**
+
+```
+M71.713 10.8171C77.7355 14.3334 82.7502 19.3459 86.2725 25.3702C89.7948 31.3945 91.7055 38.2267 91.8199 45.2065C91.3487 56.4965 86.4346 67.141 78.1509 74.8147C69.8672 82.4884 58.8873 86.5676 47.6097 86.1613C39.2397 86.279 30.995 84.1178 23.7562 79.9086C19.2115 77.2156 15.1918 73.7202 11.8918 69.5918C19.0663 69.3259 26.1329 67.7582 32.7481 64.9649C40.4947 61.7444 47.5057 56.9791 53.3545 50.959C64.1453 40.2589 70.672 25.9879 71.713 10.8171ZM67.6541 2.20465e-06C67.0968 -0.000574639 66.5451 0.112052 66.0325 0.331071C65.5198 0.550089 65.0569 0.870949 64.6716 1.27424C64.2864 1.67754 63.9868 2.15489 63.7911 2.67742C63.5954 3.19995 63.5075 3.75681 63.5328 4.31432C63.888 11.867 62.6541 19.4102 59.911 26.4548C57.1679 33.4993 52.9769 39.888 47.6097 45.2065C37.5463 55.3755 23.878 61.1512 9.58143 61.2758H4.21126C3.47413 61.2597 2.74617 61.4419 2.1033 61.8034C1.46042 62.1649 0.926168 62.6925 0.556245 63.3311C0.186323 63.9697 -0.0057238 64.6961 0.000129926 65.4343C0.00598365 66.1726 0.209523 66.8958 0.589526 67.5284C5.19614 75.9503 12.0078 82.9558 20.2923 87.7921C28.5768 92.6284 38.021 95.1125 47.6097 94.9775C54.3192 95.1772 61.0019 94.0458 67.2729 91.6485C73.5439 89.2513 79.2794 85.6355 84.149 81.0093C89.0185 76.3832 92.9261 70.8382 95.6465 64.6936C98.3669 58.5489 99.8465 51.9261 100 45.2065C99.8558 35.5269 96.8563 26.106 91.3786 18.129C85.901 10.152 78.1899 3.97507 69.2152 0.37516C68.728 0.13863 68.1954 0.0106393 67.6541 2.20465e-06Z
+```
+
+- **Items-group mapping:** this standalone `Moon` is the canonical item asset. The `Moon`
+  vectors embedded inside both ThemeSwitch frames (457:805 / 457:809) are the same glyph scaled
+  into a ~32 × 30 slot and should map to this item.
+
+---
+
+## Implementation notes / caveats
+
+- All four nodes were fetched successfully. No node failed.
+- **Colors are unbound (raw hex)** — no Figma variables exist on these nodes; the token mapping
+  above is inferred from `docs/ui.md`, not authoritative Figma bindings. Confirm intent with the
+  designer before locking, especially the track fill `#334155` (`--border`), which is identical in
+  both themes in the export.
+- The embedded ThemeSwitch icon paths (457:804/805/808/809) use *different* coordinate data than
+  the standalone items (8:107 / 8:103) because they are scaled/positioned copies. For the code
+  component, prefer reusing the standalone icon items and positioning/scaling them, per the
+  design-system consistency rule in `docs/ui.md`.
+- Screenshots confirm: Dark state shows a small dimmed sun on the left and the knob (with moon) on
+  the right; Light state shows the knob (white, with sun) on the left and a moon on the right.
+- Asset SVG source captured from Figma MCP export URLs (valid ~7 days):
+  - Sun item: `.../asset/307a94e5-a20b-4b7b-b013-347625db5de6`
+  - Moon item: `.../asset/e82ee953-3ecd-4fc4-be36-ce5943e9105e`
+  - ThemeSwitch Dark: `.../asset/776bcf33-707a-4be2-a5c5-d65d410097a0`
+  - ThemeSwitch Light: `.../asset/7f8594c8-7f72-47ba-80ad-384af6486cde`
