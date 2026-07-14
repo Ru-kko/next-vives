@@ -1,0 +1,52 @@
+.track {
+  position: relative;
+  width: 102px;
+  height: 50px;
+  padding: 0;
+  border: none;
+  border-radius: 25px;
+  background: rgb(var(--border));
+  cursor: pointer;
+}
+
+.track:focus-visible {
+  outline: 2px solid rgb(var(--blue));
+  outline-offset: 2px;
+}
+
+.icon {
+  position: absolute;
+  top: 10px;
+}
+
+.sun {
+  left: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.moon {
+  left: 60px;
+  width: 32px;
+  height: 30px;
+}
+
+.knob {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: transform 200ms ease;
+}
+
+.track[data-active-theme='light'] .knob {
+  transform: translateX(0);
+  background: rgb(var(--surface));
+}
+
+.track[data-active-theme='dark'] .knob {
+  transform: translateX(51px);
+  background: rgb(var(--text-secondary));
+}
