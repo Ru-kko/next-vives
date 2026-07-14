@@ -18,6 +18,10 @@ Contains:
 - SVG Icons (Grouped in `icons` group)
 - Image resources
 
+> **NOTE:** Every vector asset in `pages` or `components` has a corresponding item in `items` with same name.
+> A svg component must be the same as the svg item in `items` group. This is to ensure that the design system
+> is consistent and that the same assets are used across the application.
+
 ### Pages
 Contains:
 
@@ -61,8 +65,8 @@ Default theme when the attribute `data-theme="dark"` is active:
 
 - `--blue`: `59, 130, 246`
 - `--orange`: `251, 191, 36`
-- `--background`: `15, 23, 42`
-- `--surface`: `30, 41, 59`
+- `--background`: `30, 41, 59`
+- `--surface`: `15, 23, 42`
 - `--text`: `248, 250, 252`
 - `--text-secondary`: `148, 163, 184`
 
@@ -83,4 +87,26 @@ To use any color from the user's current theme, you can do so in CSS as follows:
 
 ```css
 color: rgb(var(--text));
+```
+
+## Vector Assets
+
+Most of vector assets are monocolor with the exception of company logos. All monocolor assets must be used with
+`IconProps` as follows:
+
+```tsx
+import { IconProps } from "@/components/icons";
+
+export const MyIcon = ({color, ...attr}: IconProps): JSX.Element => (
+  <svg viewBox="0 0 100 100" {...attr}>
+    <path style={{ fill: `rgb(var(--${color}))` }} d="..." />
+    <path style={{ stroke: `rgb(var(--${color}))` }} d="..." />
+  </svg>
+);
+```
+
+usage:
+
+```tsx
+<MyIcon color="blue" width={24} height={24} />
 ```
