@@ -1,5 +1,5 @@
 ---
-id: 01_theme-switch
+id: 01
 name: theme-switch
 title: Theme Switch Component and Store
 status: done
