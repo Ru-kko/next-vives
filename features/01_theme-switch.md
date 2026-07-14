@@ -2,7 +2,7 @@
 id: 01_theme-switch
 name: theme-switch
 title: Theme Switch Component and Store
-status: pending
+status: spec_ready
 sdd: true 
 ---
 # Theme Switch
